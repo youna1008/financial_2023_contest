@@ -38,8 +38,7 @@ class Graph():
         return self.f_filter
     
     # 특정 index에 대해서 다시한번 진행 (얘는 min을 적용 안하나?)
-    def merge_f_graph(self, feature, t):
-        temp = dict()
+    def merge_f_graph(self, feature, t, group_key):
         c_list = list()
 
         group_list = self.f_filter.keys()
@@ -66,7 +65,7 @@ class Graph():
             # 각각 어캐 담아야할지 고민해봐야 함.
             # 앞에는 중분류로 가기위함, 뒤에는 그룹의 총 묶인거, 마지막은 인덱스
             # 중복제거 한번 해줘야하나 싶기도 함
-            group_result = '-'.join(c_list)
+            group_result = group_key + '-' + '-'.join(c_list)
             total_group_result.add((cls_set, group_result, self.f_index[group]))
 
         if t == "big":
@@ -85,17 +84,18 @@ class Graph():
             columns = self.get_key(cls, "mid")
 
             filter_data = self.filter_graph(columns, idx)
-            self.merge_f_graph(columns, "mid")
-
+            self.merge_f_graph(columns, "mid", group_key)
+            
+        # self.big_group_result = {} # 메모리 부족할 때 
     def small_group_filter(self):
         for cls, group_key, idx in self.mid_group_result:
             # mid그룹의 column가져오기
             columns = self.get_key(cls, "small")
 
             filter_data = self.filter_graph(columns, idx)
-            self.merge_f_graph(columns, "small")
+            self.merge_f_graph(columns, "small", group_key)
 
-
+        # self.mid_group_result = {} # 메모리 부족할 때
 
     def get_key(self, cls, t):
         result = set()
